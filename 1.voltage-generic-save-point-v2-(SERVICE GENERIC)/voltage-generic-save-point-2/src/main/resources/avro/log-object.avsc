@@ -1,0 +1,32 @@
+{
+    "type": "record",
+    "name": "LogObject",
+    "namespace": "com.telkom.logging.avro.schema",
+    "fields": [
+        {
+            "name": "timestamp",
+            "type": "long"
+        },
+        {
+            "name": "hostname",
+            "type": "string"
+        },
+        {
+            "name": "transformId",
+            "type": "string"
+        },
+        {
+            "name": "type", // encrypt atau decrypt
+            "type": "string"
+        },
+        {
+            "name": "message",
+            "type": ["null", "string"],
+            "default": null
+        },
+        {
+            "name": "status",
+            "type": "string"
+        }
+    ]
+}

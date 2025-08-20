@@ -1,0 +1,141 @@
+#!/usr/bin/perl
+
+# Perl c_rehash script, scan all files in a directory
+# and add symbolic links to their hash values.
+
+# Modified to use Voltage pure-Perl certificate hashes to make OpenSSL 1.x compatible hashes.
+
+use FindBin;
+use lib "$FindBin::Bin/inc";
+use Voltage::CertHash qw( certSubjectHash certFingerprint crlIssuerHash crlFingerprint );
+
+my $dir = "/usr/local/ssl";
+
+if(@ARGV) {
+	@dirlist = @ARGV;
+} elsif($ENV{SSL_CERT_DIR}) {
+        printf "No directory specified, processing dirs from SSL_CERT_DIR env var: $ENV{SSL_CERT_DIR}\n";
+	@dirlist = split /:/, $ENV{SSL_CERT_DIR};
+} else {
+        printf "No directory specified, and no SSL_CERT_DIR, so processing dirs from hard-coded wild guess: $dir/certs\n";
+	$dirlist[0] = "$dir/certs";
+}
+
+foreach (@dirlist) {
+	if (-d $_) {
+            if (-w $_) {
+		hash_dir($_);
+            } else {
+                die "Unable to write to directory: $_\n";
+            }
+	} else {
+            die "Directory not found: $_\n";
+        }
+}
+
+sub hash_dir {
+	my %hashlist;
+	print "Doing $_[0]\n";
+	chdir $_[0];
+	opendir(DIR, ".");
+	my @flist = readdir(DIR);
+	# Delete any existing symbolic links
+	foreach (grep {/^[\da-f]+\.r{0,1}\d+$/} @flist) {
+		if(-l $_) {
+			unlink $_;
+		}
+	}
+	closedir DIR;
+	FILE: foreach $fname (grep {/\.pem$/} @flist) {
+		# Check to see if certificates and/or CRLs present.
+		my ($cert, $crl) = check_file($fname);
+		if(!$cert && !$crl) {
+			print STDERR "WARNING: $fname does not contain a certificate or CRL: skipping\n";
+			next;
+		}
+		link_hash_cert($fname) if($cert);
+		link_hash_crl($fname) if($crl);
+	}
+}
+
+sub check_file {
+	my ($is_cert, $is_crl) = (0,0);
+	my $fname = $_[0];
+	open IN, $fname;
+	while(<IN>) {
+		if(/^-----BEGIN (.*)-----/) {
+			my $hdr = $1;
+			if($hdr =~ /^(X509 |TRUSTED |)CERTIFICATE$/) {
+				$is_cert = 1;
+				last if($is_crl);
+			} elsif($hdr eq "X509 CRL") {
+				$is_crl = 1;
+				last if($is_cert);
+			}
+		}
+	}
+	close IN;
+	return ($is_cert, $is_crl);
+}
+
+
+# Link a certificate to its subject name hash value, each hash is of
+# the form <hash>.<n> where n is an integer. If the hash value already exists
+# then we need to up the value of n, unless its a duplicate in which
+# case we skip the link. We check for duplicates by comparing the
+# certificate fingerprints
+
+sub link_hash_cert {
+		my $fname = $_[0];
+		$fname =~ s/'/'\\''/g;
+		my $hash = certSubjectHash($fname);
+		my $fprint = certFingerprint($fname);
+		my $suffix = 0;
+		# Search for an unused hash filename
+		while(exists $hashlist{"$hash.$suffix"}) {
+			# Hash matches: if fingerprint matches its a duplicate cert
+			if($hashlist{"$hash.$suffix"} eq $fprint) {
+				print STDERR "WARNING: Skipping duplicate certificate $fname\n";
+				return;
+			}
+			$suffix++;
+		}
+		$hash .= ".$suffix";
+		print "$fname => $hash\n";
+		$symlink_exists=eval {symlink("",""); 1};
+		if ($symlink_exists) {
+			symlink $fname, $hash;
+		} else {
+			system ("cp", $fname, $hash);
+		}
+		$hashlist{$hash} = $fprint;
+}
+
+# Same as above except for a CRL. CRL links are of the form <hash>.r<n>
+
+sub link_hash_crl {
+		my $fname = $_[0];
+		$fname =~ s/'/'\\''/g;
+		my $hash = crlIssuerHash($fname);
+		my $fprint = crlFingerprint($fname);
+		my $suffix = 0;
+		# Search for an unused hash filename
+		while(exists $hashlist{"$hash.r$suffix"}) {
+			# Hash matches: if fingerprint matches its a duplicate cert
+			if($hashlist{"$hash.r$suffix"} eq $fprint) {
+				print STDERR "WARNING: Skipping duplicate CRL $fname\n";
+				return;
+			}
+			$suffix++;
+		}
+		$hash .= ".r$suffix";
+		print "$fname => $hash\n";
+		$symlink_exists=eval {symlink("",""); 1};
+		if ($symlink_exists) {
+			symlink $fname, $hash;
+		} else {
+			system ("cp", $fname, $hash);
+		}
+		$hashlist{$hash} = $fprint;
+}
+
