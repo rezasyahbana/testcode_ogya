@@ -1,0 +1,53 @@
+{
+    "global_settings": {
+        "row_count": 10000,
+        "file_name": "benchmark_10k",
+        "output_format": "csv",
+        "platform": "linux",
+        "generation_mode": "rows"
+    },
+    "columns": [
+        {
+            "column_name": "id",
+            "generator_type": "uuid"
+        },
+        {
+            "column_name": "full_name",
+            "generator_type": "full_name"
+        },
+        {
+            "column_name": "first_name",
+            "generator_type": "first_name"
+        },
+        {
+            "column_name": "middle_name",
+            "generator_type": "middle_name"
+        },
+        {
+            "column_name": "last_name",
+            "generator_type": "last_name"
+        },
+        {
+            "column_name": "gender",
+            "generator_type": "gender"
+        },
+        {
+            "column_name": "email",
+            "generator_type": "email"
+        },
+        {
+            "column_name": "phone",
+            "generator_type": "phone"
+        },
+        {
+            "column_name": "birth_date",
+            "generator_type": "date",
+            "date_format": "yyyy-mm-dd"
+        },
+        {
+            "column_name": "created_at",
+            "generator_type": "timestamp",
+            "date_format": "yyyy-mm-dd HH:MM:ss"
+        }
+    ]
+}

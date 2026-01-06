@@ -1,0 +1,30 @@
+{
+    "global_settings": {
+        "row_count": 5,
+        "file_name": "mysql_test",
+        "output_format": "sql",
+        "platform": "linux",
+        "generation_mode": "rows"
+    },
+    "sql_settings": {
+        "dialect": "mysql",
+        "table_name": "employees"
+    },
+    "columns": [
+        {
+            "column_name": "id",
+            "generator_type": "uuid",
+            "sql_type": "CHAR(36)"
+        },
+        {
+            "column_name": "full_name",
+            "generator_type": "full_name",
+            "sql_type": "VARCHAR(100)"
+        },
+        {
+            "column_name": "is_active",
+            "generator_type": "boolean",
+            "sql_type": "TINYINT(1)"
+        }
+    ]
+}

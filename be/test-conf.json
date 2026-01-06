@@ -1,0 +1,35 @@
+{
+    "global_settings": {
+        "row_count": 100,
+        "file_name": "test_data",
+        "output_format": "csv",
+        "platform": "linux",
+        "generation_mode": "rows"
+    },
+    "columns": [
+        {
+            "column_name": "id",
+            "generator_type": "uuid"
+        },
+        {
+            "column_name": "full_name",
+            "generator_type": "full_name"
+        },
+        {
+            "column_name": "first_name",
+            "generator_type": "first_name"
+        },
+        {
+            "column_name": "gender",
+            "generator_type": "gender"
+        },
+        {
+            "column_name": "email",
+            "generator_type": "email"
+        },
+        {
+            "column_name": "phone",
+            "generator_type": "phone"
+        }
+    ]
+}

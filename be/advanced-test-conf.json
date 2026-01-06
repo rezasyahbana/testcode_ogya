@@ -1,0 +1,79 @@
+{
+    "global_settings": {
+        "row_count": 10,
+        "file_name": "advanced_test",
+        "output_format": "sql",
+        "platform": "linux",
+        "generation_mode": "rows"
+    },
+    "sql_settings": {
+        "dialect": "postgresql",
+        "table_name": "public.employees"
+    },
+    "columns": [
+        {
+            "column_name": "id",
+            "generator_type": "uuid",
+            "sql_type": "UUID"
+        },
+        {
+            "column_name": "full_name",
+            "generator_type": "full_name",
+            "sql_type": "VARCHAR(100)"
+        },
+        {
+            "column_name": "first_name",
+            "generator_type": "first_name",
+            "sql_type": "VARCHAR(50)"
+        },
+        {
+            "column_name": "gender",
+            "generator_type": "gender",
+            "sql_type": "CHAR(1)"
+        },
+        {
+            "column_name": "birth_date",
+            "generator_type": "date",
+            "sql_type": "DATE",
+            "options": {
+                "format": "YYYY/MM/DD"
+            }
+        },
+        {
+            "column_name": "hire_date",
+            "generator_type": "timestamp",
+            "sql_type": "TIMESTAMP",
+            "options": {
+                "format": "YYYY-MM-DD HH:MM:ss"
+            }
+        },
+        {
+            "column_name": "salary",
+            "generator_type": "salary",
+            "sql_type": "VARCHAR(50)",
+            "options": {
+                "min": 5000000,
+                "max": 15000000,
+                "currency": "Rp"
+            }
+        },
+        {
+            "column_name": "is_active",
+            "generator_type": "boolean",
+            "sql_type": "BOOLEAN"
+        },
+        {
+            "column_name": "ip_address",
+            "generator_type": "ip_address",
+            "sql_type": "VARCHAR(45)"
+        },
+        {
+            "column_name": "employee_code",
+            "generator_type": "random_number",
+            "sql_type": "VARCHAR(10)",
+            "options": {
+                "digits": 8
+            }
+        }
+    ]
+}

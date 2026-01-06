@@ -1,0 +1,57 @@
+{
+  "global_settings": {
+    "row_count": 1000000,
+    "target_size_mb": 100,
+    "file_name": "data_transaksi_2024",
+    "output_format": "sql",
+    "platform": "linux",
+    "generation_mode": "rows"
+  },
+  "sql_settings": {
+    "dialect": "postgresql",
+    "table_name": "public.transactions"
+  },
+  "columns": [
+    {
+      "column_name": "id",
+      "generator_type": "uuid",
+      "sql_type": "UUID"
+    },
+    {
+      "column_name": "full_name",
+      "generator_type": "full_name",
+      "sql_type": "VARCHAR(100)"
+    },
+    {
+      "column_name": "first_name",
+      "generator_type": "first_name",
+      "sql_type": "VARCHAR(50)"
+    },
+    {
+      "column_name": "gender",
+      "generator_type": "gender",
+      "sql_type": "CHAR(1)"
+    },
+    {
+      "column_name": "email",
+      "generator_type": "email",
+      "sql_type": "VARCHAR(100)"
+    },
+    {
+      "column_name": "phone",
+      "generator_type": "phone",
+      "sql_type": "VARCHAR(20)"
+    },
+    {
+      "column_name": "trx_date",
+      "generator_type": "date",
+      "sql_type": "TIMESTAMP",
+      "date_format": "yyyy-mm-dd HH:MM:ss"
+    },
+    {
+      "column_name": "amount",
+      "generator_type": "decimal",
+      "sql_type": "DECIMAL(10,2)"
+    }
+  ]
+}
